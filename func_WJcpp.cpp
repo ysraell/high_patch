@@ -1,23 +1,23 @@
 
 /******************************************************
- * The original Eigen Library have not the function
- * A.sortAscending() and A.sortDescending(). 
- * Equivalent to use A = sort(A,'ascend') and A = sort(A,'descend'),
- * respectively, from MATLAB.
  *
  * Original Eigen Lib (default and working)
  * mex -I/usr/include/eigen3 func_WJcpp.cpp
  *
  * 
+ * The original Eigen Library have not the function
+ * A.sortAscending() and A.sortDescending(). 
+ * Equivalent to use A = sort(A,'ascend') and A = sort(A,'descend'),
+ * respectively, from MATLAB.
  * EigenDoBetter Lib (http://eigendobetter.com/)
  * mex -I/home/israel/Documents/EigenDoBetter func_WJcpp.cpp
+ * For some reason, I have a problem with svd and trabspose.
+ * So, I try use std::sort
  *
  * To acticve OpenMP (parallel processing)  ("Eigen::initParallel();")
  * mex -v CFLAGS='$CFLAGS -fopenmp' -I/usr/include/eigen3 func_WJcpp.cpp
+ * Not working... I not know how fix.
  *
- * For some reason, I have a problem with svd and trabspose.
- *
- * So, I try use std::sort
  *
  *
  ******************************************************/
@@ -91,7 +91,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     const uint Nz = dim_z2[0]*dim_z2[1];
     const uint N = dim_zc[0]*dim_zc[1];    
     MatrixXd W(N,K);
-    MatrixXi J(N,K);
+    //MatrixXi J(N,K);
    
        
     int ii, jj;
@@ -136,9 +136,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
          sort(D.begin(), D.end(), myComparison);
 
          for (jk=0; jk<K; jk++){
-             J(i,jk) = D[jk].first;
-             
-            pixel2ij(J(i,jk),dim_z2[0],&ic,&jc);
+             //J(i,jk) = D[jk].first;
+            //pixel2ij(J(i,jk),dim_z2[0],&ic,&jc);
+             pixel2ij(D[jk].first,dim_z2[0],&ic,&jc);
             si = 0;
             for (ii=ic-r; ii<=ic+r; ii++){
                 sj=0;
@@ -176,11 +176,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   double *Out0 = mxGetPr(plhs[0]);
   MatrixXd::Map(Out0, N, K) = W;
 
-  MatrixXd Jd(N,K);
-  Jd = J.cast<double>();
-  plhs[1] = mxCreateNumericMatrix(N, K, mxDOUBLE_CLASS, mxREAL);
-  double *Out1 = mxGetPr(plhs[1]);
-  MatrixXd::Map(Out1, N, K) = Jd;
+//   MatrixXd Jd(N,K);
+//   Jd = J.cast<double>();
+//   plhs[1] = mxCreateNumericMatrix(N, K, mxDOUBLE_CLASS, mxREAL);
+//   double *Out1 = mxGetPr(plhs[1]);
+//   MatrixXd::Map(Out1, N, K) = Jd;
   
 }
 
